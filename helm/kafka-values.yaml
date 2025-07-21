@@ -51,7 +51,7 @@ extraDeploy:
           containers:
             - name: kafka-connect
               image: e119/kafka-connect-mongo:latest
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               ports:
                 - containerPort: 8083
               env:
