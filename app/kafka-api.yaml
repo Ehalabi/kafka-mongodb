@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-api
+  template:
+    metadata:
+      labels:
+        app: kafka-api
+    spec:
+      containers:
+        - name: kafka-api
+          image: e119/kafka-api-server:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-connection
+                  key: MONGO_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-api
+spec:
+  selector:
+    app: kafka-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
+

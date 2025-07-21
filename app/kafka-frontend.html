@@ -1,0 +1,45 @@
+<form id="purchase-form" action="/purchase" method="POST">
+  <input type="text" name="item" placeholder="Item name" required />
+  <input type="number" name="price" placeholder="Price" required />
+  <button type="submit">Buy</button>
+</form>
+
+<button id="list-btn">Show Purchases</button>
+<ul id="purchase-list"></ul>
+
+<script>
+  document.getElementById('purchase-form').onsubmit = function(event) {
+    event.preventDefault();
+
+    fetch('/purchase', {
+      method: 'POST',
+      body: new FormData(this)
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message))
+    .catch(err => alert('Error: ' + err));
+
+    this.reset();
+  };
+
+  document.getElementById('list-btn').addEventListener('click', function() {
+    fetch('/list')
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById('purchase-list');
+        list.innerHTML = ''; 
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.item} - $${item.price}`;
+            list.appendChild(li);
+          });
+        } else {
+          list.innerHTML = '<li>No purchases found.</li>';
+        }
+      })
+      .catch(err => {
+        alert('Error fetching purchases: ' + err);
+      });
+  });
+</script>

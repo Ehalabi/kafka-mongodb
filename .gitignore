@@ -1,0 +1,37 @@
+# ignore everything
+*
+
+
+# exclude stuff
+!**/
+!*.sh
+!*.md
+!*.c
+!*.h
+!*.py
+!*.html
+!.gitignore
+!makefile
+!*dockerfile
+!*Dockerfile
+!Jenkinsfile*
+!requirements.txt
+!*.yaml
+!*.yml
+!*.conf
+!.myfuncs
+!aws_part2.png
+!simple_eks_diagram.png
+!*.ini
+!*.tf
+!.helmignore
+!mysql_ws.txt
+!*.properties
+!*.json
+!Computer_Firm_Relationship.png
+.venv
+.terraform
+pytest-env
+devops/prometheus/project_board
+*builds/
+!core-site.xml

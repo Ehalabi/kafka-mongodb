@@ -1,0 +1,102 @@
+kraft:
+  enabled: true
+
+zookeeper:
+  enabled: false
+
+auth:
+  enabled: false
+  sasl:
+    enabled: false
+  tls:
+    type: plaintext
+
+listeners:
+  client:
+    protocol: PLAINTEXT
+  controller:
+    protocol: PLAINTEXT
+
+persistence:
+  enabled: false
+
+logPersistence:
+  enabled: false
+
+controller:
+  persistence:
+    enabled: false
+  logPersistence:
+    enabled: false
+
+
+extraDeploy:
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: kafka-connect
+      labels:
+        app: kafka-connect
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: kafka-connect
+      template:
+        metadata:
+          labels:
+            app: kafka-connect
+        spec:
+          containers:
+            - name: kafka-connect
+              image: e119/kafka-connect-mongo:latest
+              imagePullPolicy: IfNotPresent
+              ports:
+                - containerPort: 8083
+              env:
+                - name: CONNECT_BOOTSTRAP_SERVERS
+                  value: "kafka.default.svc.cluster.local:9092"
+                - name: CONNECT_REST_PORT
+                  value: "8083"
+                - name: CONNECT_KEY_CONVERTER
+                  value: "org.apache.kafka.connect.json.JsonConverter"
+                - name: CONNECT_VALUE_CONVERTER
+                  value: "org.apache.kafka.connect.json.JsonConverter"
+                - name: CONNECT_INTERNAL_KEY_CONVERTER
+                  value: "org.apache.kafka.connect.json.JsonConverter"
+                - name: CONNECT_INTERNAL_VALUE_CONVERTER
+                  value: "org.apache.kafka.connect.json.JsonConverter"
+                - name: CONNECT_PLUGIN_PATH
+                  value: "/opt/bitnami/kafka/plugins"
+                - name: MONGO_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb-connection
+                      key: MONGO_URI
+              command: ["/opt/bitnami/kafka/bin/connect-distributed.sh"]
+              args: ["/bitnami/kafka/config/connect-distributed.properties"]
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /bitnami/kafka/config
+          volumes:
+            - name: config-volume
+              configMap:
+                name: kafka-connect-config
+                items:
+                - key: connect-distributed.properties
+                  path: connect-distributed.properties
+  - |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: kafka-connect
+    spec:
+      selector:
+        app: kafka-connect
+      ports:
+        - name: http
+          protocol: TCP
+          port: 8083
+          targetPort: 8083
+

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-config
+data:
+  connect-distributed.properties: |-
+    bootstrap.servers=kafka.default.svc.cluster.local:9092
+    group.id=connect-cluster
+    config.storage.topic=connect-configs
+    offset.storage.topic=connect-offsets
+    status.storage.topic=connect-status
+    key.converter=org.apache.kafka.connect.json.JsonConverter
+    value.converter=org.apache.kafka.connect.json.JsonConverter
+    internal.key.converter=org.apache.kafka.connect.json.JsonConverter
+    internal.value.converter=org.apache.kafka.connect.json.JsonConverter
+    offset.flush.interval.ms=10000
+    plugin.path=/opt/bitnami/kafka/plugins
