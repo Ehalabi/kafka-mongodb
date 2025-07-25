@@ -1,0 +1,10 @@
+auth:
+  existingSecret: mongodb-creds
+  auth.database: mydatabase
+
+architecture: replicaset
+
+resources: {}
+
+persistence:
+  enabled: false
