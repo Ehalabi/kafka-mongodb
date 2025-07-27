@@ -5,8 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY kafka-api-server.py .
-COPY kafka-frontend.html .
+COPY src/kafka-api-server.py .
+COPY src/kafka-frontend.html .
 
 EXPOSE 5000
 
